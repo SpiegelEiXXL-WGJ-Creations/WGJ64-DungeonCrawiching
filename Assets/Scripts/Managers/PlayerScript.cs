@@ -24,26 +24,26 @@ public class PlayerScript : MonoBehaviour
     public int maxLevel;
 
     [Header("You can look at this stuff")]
+    public int mapX;
+    public int mapY;
+    public int _currentHP;
+    public int _currentLevel;
     public GameManager gm;
     public GameObject player;
     public Animator playerAnimator;
     public SpriteRenderer playerSprite;
     public Vector3 targetPosition;
+    public UnityEngine.UI.Image HPBarFilling;
+    public UnityEngine.UI.Text HPBarText;
+    public UnityEngine.UI.Text LevelUIObjectText;
 
     [Header("States")]
     public bool isWalking;
     public bool isAttacking;
     public bool isDying;
 
-    public int mapX;
-    public int mapY;
-    public int _currentHP;
-    public int _currentLevel;
 
-    public UnityEngine.UI.Image HPBarFilling;
-    public UnityEngine.UI.Text HPBarText;
-    public UnityEngine.UI.Text LevelUIObjectText;
-
+    // Getters & Setters
     public int currentHP
     {
         get
@@ -84,7 +84,10 @@ public class PlayerScript : MonoBehaviour
         player = GameObject.FindWithTag("PlayerObject");
         playerAnimator = player.GetComponent<Animator>();
         playerSprite = player.GetComponent<SpriteRenderer>();
-        gm.mapSpawnDone += gameManager_MapSpawningDone;
+        if (gm.mapIsInitialized)
+            gameManager_MapSpawningDone();
+        else
+            gm.mapSpawnDone += gameManager_MapSpawningDone;
         if (HPBar)
         {
             HPBarText = HPBar.GetComponentInChildren<UnityEngine.UI.Text>();

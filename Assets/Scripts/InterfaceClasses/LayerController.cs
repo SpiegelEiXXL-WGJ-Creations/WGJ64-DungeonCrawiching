@@ -20,7 +20,7 @@ public class LayerController : MonoBehaviour
             for (int j = 0; j < layerWidth; j++)
             {
                 GameObject tc = GameObject.Instantiate(tileControllerPrefab, parentObjectForTiles);
-                tiles.Add(i * layerHeight + j, tc.GetComponent<TileController>());
+                tiles.Add(i * layerHeight + j * layerWidth, tc.GetComponent<TileController>());
 
             }
         }
