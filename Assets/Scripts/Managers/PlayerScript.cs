@@ -30,6 +30,7 @@ public class PlayerScript : MonoBehaviour
     public int _currentLevel;
     public GameManager gm;
     public GameObject player;
+    public RectTransform playerRect;
     public Animator playerAnimator;
     public SpriteRenderer playerSprite;
     public Vector3 targetPosition;
@@ -84,6 +85,7 @@ public class PlayerScript : MonoBehaviour
         player = GameObject.FindWithTag("PlayerObject");
         playerAnimator = player.GetComponent<Animator>();
         playerSprite = player.GetComponent<SpriteRenderer>();
+        playerRect = player.GetComponent<RectTransform>();
         if (gm.mapIsInitialized)
             gameManager_MapSpawningDone();
         else
@@ -108,7 +110,9 @@ public class PlayerScript : MonoBehaviour
 
     void gameManager_MapSpawningDone()
     {
-        player.transform.localPosition = new Vector3(gm.cellWidth / 2f, gm.cellHeight / 2f, zPos);
+
+        playerRect.anchoredPosition = new Vector3(gm.cellWidth / 2f, -1f * gm.cellHeight / 2f, zPos);
+
         mapX = 0;
         mapY = gm.mapHeight - 1;
     }
@@ -119,8 +123,8 @@ public class PlayerScript : MonoBehaviour
     {
         if (isWalking)
         {
-            player.transform.localPosition = Vector3.MoveTowards(player.transform.localPosition, targetPosition, animationSpeed);
-            if (Vector3.Distance(player.transform.localPosition, targetPosition) <= 0f)
+            playerRect.localPosition = Vector3.MoveTowards(playerRect.localPosition, targetPosition, animationSpeed);
+            if (Vector3.Distance(playerRect.localPosition, targetPosition) <= 0f)
             {
                 isWalking = false;
                 playerAnimator.SetBool("isWalking", false);
@@ -138,7 +142,7 @@ public class PlayerScript : MonoBehaviour
         if (!isWalking && !isAttacking && !isDying && !gm.isBusy)
             if (Input.GetButton("Horizontal") && Input.GetAxisRaw("Horizontal") > 0f)
             {
-                targetPosition = new Vector3(player.transform.localPosition.x + gm.cellWidth, player.transform.localPosition.y, zPos);
+                targetPosition = new Vector3(playerRect.localPosition.x + gm.cellWidth, playerRect.localPosition.y, zPos);
 
                 playerAnimator.SetBool("isWalking", true);
                 playerAnimator.Play(walkAnimation);
@@ -148,7 +152,7 @@ public class PlayerScript : MonoBehaviour
             }
             else if (Input.GetButton("Horizontal") && Input.GetAxisRaw("Horizontal") < 0f)
             {
-                targetPosition = new Vector3(player.transform.localPosition.x - gm.cellWidth, player.transform.localPosition.y, zPos);
+                targetPosition = new Vector3(playerRect.localPosition.x - gm.cellWidth, playerRect.localPosition.y, zPos);
 
                 playerAnimator.SetBool("isWalking", true);
                 playerAnimator.Play(walkAnimation);
@@ -159,7 +163,7 @@ public class PlayerScript : MonoBehaviour
             else if (Input.GetButton("Vertical") && Input.GetAxisRaw("Vertical") > 0f)
             {
 
-                targetPosition = new Vector3(player.transform.localPosition.x, player.transform.localPosition.y + gm.cellHeight, zPos);
+                targetPosition = new Vector3(playerRect.localPosition.x, playerRect.localPosition.y + gm.cellHeight, zPos);
                 playerAnimator.SetBool("isWalking", true);
                 playerAnimator.Play(walkAnimation);
                 isWalking = true;
@@ -167,7 +171,7 @@ public class PlayerScript : MonoBehaviour
             }
             else if (Input.GetButton("Vertical") && Input.GetAxisRaw("Vertical") < 0f)
             {
-                targetPosition = new Vector3(player.transform.localPosition.x, player.transform.localPosition.y - gm.cellHeight, zPos);
+                targetPosition = new Vector3(playerRect.localPosition.x, playerRect.localPosition.y - gm.cellHeight, zPos);
                 playerAnimator.SetBool("isWalking", true);
                 playerAnimator.Play(walkAnimation);
                 isWalking = true;
@@ -177,6 +181,7 @@ public class PlayerScript : MonoBehaviour
             {
                 //playerAnimator.SetBool("isAttacking", true);
                 playerAnimator.Play(attackAnimation);
+                playerAnimator.GetComponentInChildren<AudioSource>().Play();
                 isAttacking = true;
             }
     }

@@ -320,15 +320,16 @@ MonoBehaviour:
   LayerPrefab: {fileID: 1667753811308238, guid: b8f5f7d9cb3604c0d9f184a2add17825,
     type: 2}
   TilePrefab: {fileID: 1920753771314060, guid: 3da86d403a7e745f6b114e38362a969d, type: 2}
+  mapToLoad: 
   NumberOfLayers: 1
   mapWidth: 10
   mapHeight: 3
   isBusy: 0
+  mapIsInitialized: 0
   cellWidth: 0
   cellHeight: 0
   layers: []
   playerScript: {fileID: 0}
-  mapIsInitialized: 0
 --- !u!4 &294151400
 Transform:
   m_ObjectHideFlags: 0
@@ -365,21 +366,21 @@ MonoBehaviour:
   animationSpeed: 0.005
   maxHP: 15
   maxLevel: 0
+  mapX: 0
+  mapY: 0
+  _currentHP: 0
+  _currentLevel: 0
   gm: {fileID: 0}
   player: {fileID: 0}
   playerAnimator: {fileID: 0}
   playerSprite: {fileID: 0}
   targetPosition: {x: 0, y: 0, z: 0}
-  isWalking: 0
-  isAttacking: 0
-  isDying: 0
-  mapX: 0
-  mapY: 0
-  _currentHP: 0
-  _currentLevel: 0
   HPBarFilling: {fileID: 0}
   HPBarText: {fileID: 0}
   LevelUIObjectText: {fileID: 0}
+  isWalking: 0
+  isAttacking: 0
+  isDying: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

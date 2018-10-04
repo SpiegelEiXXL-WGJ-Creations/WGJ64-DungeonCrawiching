@@ -7,17 +7,32 @@ public static class StaticUtilitiesFunction
     public static List<GameObject> LoadMapFromFile(string fileName, GameObject tileControllerPrefab, bool replaceLayers = false)
     {
         string x = System.IO.File.ReadAllText(fileName);
-        string[] layersX = x.Split('\n');
+        x = x.Replace("\r\n", "\n");
+        string[] gameManagerX = x.Split('\t');
+        Newtonsoft.Json.JsonConvert.PopulateObject(gameManagerX[0], GameManager.instance);
+
+        string[] layersX = gameManagerX[1].Split('\n');
+
         List<GameObject> spawnedObjects = new List<GameObject>();
         int i = 0;
 
         if (replaceLayers)
-            foreach (LayerController lc in GameManager.instance.layers)
+            while (GameManager.instance.layers.Count > 0)
+            {
+                LayerController lc = GameManager.instance.layers[0];
+                GameManager.instance.layers.Remove(lc);
                 GameObject.DestroyImmediate(lc.gameObject);
+
+            }
 
         foreach (string layerX in layersX)
         {
             i++;
+            if (layerX.Trim() == "")
+            {
+                Debug.Log("Dangling new-line!");
+                continue;
+            }
 
             GameObject o = GameObject.Instantiate(GameManager.instance.LayerPrefab, GameManager.instance.GameGrid.transform);
             LayerController l = o.GetComponent<LayerController>();
@@ -28,28 +43,38 @@ public static class StaticUtilitiesFunction
             string[] layerXData = layerX.Split('\r');
             Newtonsoft.Json.JsonConvert.PopulateObject(layerXData[0], l);
             l.BuildLayer(null, null);
+            if (layerXData.Length < 2)
+            {
+                Debug.Log("Dangling... line? >" + layerX);
+                continue;
+            }
 
             string[] tilesX = layerXData[1].Split(new string[] { "#!#" }, System.StringSplitOptions.RemoveEmptyEntries);
-            int idx = -1;
+            int xPos = 0;
+            int yPos = 0;
             foreach (string tileX in tilesX)
             {
-                idx++;
-                /*Dictionary<string, object> y = UnityEngine.JsonUtility.FromJson<Dictionary<string, object>>(tileX);
-                    Debug.Log(y.Keys.ToString() + " : " + y.Keys.Count);*/
-
-                Newtonsoft.Json.JsonConvert.PopulateObject(tileX, l.tiles[idx]);
-                l.tiles[idx].Setup();
+                Coordinate2D tmp = Coordinate2D.Is(xPos, yPos);
+                Newtonsoft.Json.JsonConvert.PopulateObject(tileX, l.tiles[tmp]);
+                l.tiles[tmp].Setup();
+                xPos++;
+                if (xPos >= GameManager.instance.mapWidth)
+                {
+                    xPos = 0;
+                    yPos++;
+                }
 
             }
+            GameManager.instance.layers.Add(l);
             spawnedObjects.Add(o);
         }
+        GameManager.instance.initGameManager();
         return spawnedObjects;
     }
 
     public static void SaveMapToFile(string fileFile)
     {
         string outputStr = "";
-
         foreach (LayerController l in GameManager.instance.layers)
         {
             string expStr = "";
@@ -66,7 +91,9 @@ public static class StaticUtilitiesFunction
             else
                 outputStr = outputStr + "\n" + expStr;
         }
-        outputStr = System.Text.RegularExpressions.Regex.Replace(outputStr, @",?""[^""]*"":\{""instanceID"":[^\}]*\},?", "");
+        outputStr = UnityEngine.JsonUtility.ToJson(GameManager.instance) + "\t" + outputStr;
+
+        outputStr = System.Text.RegularExpressions.Regex.Replace(outputStr, @"(""[^""]*"":)?(\{""instanceID"":[^\},]*\},?)", "");
         System.IO.File.WriteAllText(fileFile, outputStr);
 
     }

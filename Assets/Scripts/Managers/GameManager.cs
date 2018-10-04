@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
         initMap();
     }
 
-    void initGameManager()
+    public void initGameManager()
     {
         // <setup ALL THE STUFF>
         playerScript = GetComponent<PlayerScript>();
@@ -59,6 +59,18 @@ public class GameManager : MonoBehaviour
 
         GameGrid.GetComponent<RectTransform>().sizeDelta = new Vector3(mapWidth * cellWidth, mapHeight * cellHeight);
         // </setup>
+    }
+
+    public void initLayer(int layerIndex, bool build = false)
+    {
+        layers[layerIndex].layerWidth = mapWidth;
+        layers[layerIndex].layerHeight = mapHeight;
+
+        layers[layerIndex].name = "Layer#" + layerIndex;
+        layers[layerIndex].GetComponent<UnityEngine.UI.GridLayoutGroup>().cellSize = new Vector3(cellHeight, cellWidth);
+
+        if (build)
+            layers[layerIndex].BuildLayer(layerIndex > 0 ? layers[layerIndex - 1] : null, layerIndex == layers.Count - 1 ? null : layers[layerIndex + 1]);
     }
 
     void initMap()
@@ -75,13 +87,8 @@ public class GameManager : MonoBehaviour
             }
             for (int i = 0; i < layers.Count; i++)
             {
-                layers[i].layerWidth = mapWidth;
-                layers[i].layerHeight = mapHeight;
-
-                layers[i].name = "Layer#" + i;
-                layers[i].GetComponent<UnityEngine.UI.GridLayoutGroup>().cellSize = new Vector3(cellHeight, cellWidth);
+                initLayer(i, false);
             }
-
             for (int i = 0; i < layers.Count; i++)
                 layers[i].BuildLayer(i > 0 ? layers[i - 1] : null, i == layers.Count - 1 ? null : layers[i + 1]);
 

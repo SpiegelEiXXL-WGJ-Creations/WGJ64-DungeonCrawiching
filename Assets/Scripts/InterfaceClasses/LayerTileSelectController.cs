@@ -10,6 +10,7 @@ public class LayerTileSelectController : LayerController
     private List<GameObject> tileObjectPrefabs;
     public TileController selectedTile;
     public UnityEngine.UI.Image tilePreview;
+    public int selectedLayer;
 
     public int selectedTileNumber
     {
@@ -48,6 +49,7 @@ public class LayerTileSelectController : LayerController
             tileObjectPrefabs.Add(o);
         }
         selectedTileNumber = 0;
+        selectedLayer = 0;
 
 
     }
@@ -75,7 +77,7 @@ public class LayerTileSelectController : LayerController
             if (loadFile == "")
                 return;
 
-            StaticUtilitiesFunction.LoadMapFromFile(loadFile, tileControllerPrefab);
+            StaticUtilitiesFunction.LoadMapFromFile(loadFile, tileControllerPrefab, true);
         }
         if (Input.GetKey(KeyCode.Plus))
             Camera.main.orthographicSize += 1;
@@ -85,6 +87,20 @@ public class LayerTileSelectController : LayerController
             selectedTileNumber++;
         if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetAxis("Mouse ScrollWheel") <= -0.99f)
             selectedTileNumber--;
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            selectedLayer++;
+            if (GameManager.instance.layers.Count <= selectedLayer)
+            {
+                LayerController l = GameObject.Instantiate(GameManager.instance.LayerPrefab, GameManager.instance.GameGrid.transform).GetComponent<LayerController>();
+                GameManager.instance.layers.Add(l);
+                GameManager.instance.initLayer(GameManager.instance.layers.Count - 1, true);
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+            if (selectedLayer > 0)
+                selectedLayer--;
+
 
         if (Input.GetButtonDown("Fire1"))
         {
@@ -92,7 +108,9 @@ public class LayerTileSelectController : LayerController
                 playerRef = gm.playerScript;
             if (!playerRef)
                 return;
-            GameManager.instance.layers[0].tiles[playerRef.mapY * gm.mapHeight + playerRef.mapX * gm.mapWidth].GettingOverwritten(tileObjectPrefabs[selectedTileNumber].GetComponent<TileController>());
+
+
+            GameManager.instance.layers[selectedLayer].tiles[Coordinate2D.Is(playerRef.mapX, playerRef.mapY)].GettingOverwritten(tileObjectPrefabs[selectedTileNumber].GetComponent<TileController>());
         }
 
     }

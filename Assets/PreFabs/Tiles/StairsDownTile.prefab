@@ -9,32 +9,32 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1920753771314060}
+  m_RootGameObject: {fileID: 1945395443567594}
   m_IsPrefabAsset: 1
---- !u!1 &1920753771314060
+--- !u!1 &1945395443567594
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 224415672509615376}
-  - component: {fileID: 212291993265079534}
-  - component: {fileID: 114314910941430150}
-  - component: {fileID: 114642645329084464}
+  - component: {fileID: 224140135700265372}
+  - component: {fileID: 212790068682979446}
+  - component: {fileID: 114860948777225534}
+  - component: {fileID: 114908096825667836}
   m_Layer: 0
-  m_Name: StandardTile
+  m_Name: StairsDownTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &114314910941430150
+--- !u!114 &114860948777225534
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1920753771314060}
+  m_GameObject: {fileID: 1945395443567594}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 1679637790, guid: f70555f144d8491a825f0804e09c671c, type: 3}
@@ -48,12 +48,12 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &114642645329084464
+--- !u!114 &114908096825667836
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1920753771314060}
+  m_GameObject: {fileID: 1945395443567594}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bed2b4139ddb848ea8aa21a5999d0f02, type: 3}
@@ -61,15 +61,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 0}
   _spriteName: 
-  walkableByPlayer: 1
-  walkableByEnemy: 1
+  walkableByPlayer: 0
+  walkableByEnemy: 0
   walkableByGlitch: 1
---- !u!212 &212291993265079534
+--- !u!212 &212790068682979446
 SpriteRenderer:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1920753771314060}
+  m_GameObject: {fileID: 1945395443567594}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -99,7 +99,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300052, guid: 43980ba3ca67449458ab91b6b5c99c61, type: 3}
+  m_Sprite: {fileID: 21300010, guid: 6fc4c3cd234d848de8fba1ed3dba2faf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -110,12 +110,12 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!224 &224415672509615376
+--- !u!224 &224140135700265372
 RectTransform:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1920753771314060}
+  m_GameObject: {fileID: 1945395443567594}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
