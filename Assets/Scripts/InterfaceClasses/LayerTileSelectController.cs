@@ -63,6 +63,7 @@ public class LayerTileSelectController : LayerController
 
     private void FixedUpdate()
     {
+        if (playerRef.inMenu) return;
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Y))
         {

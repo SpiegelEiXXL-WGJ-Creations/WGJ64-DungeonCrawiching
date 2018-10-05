@@ -297,6 +297,7 @@ GameObject:
   - component: {fileID: 294151400}
   - component: {fileID: 294151401}
   - component: {fileID: 294151399}
+  - component: {fileID: 294151402}
   m_Layer: 0
   m_Name: Scripts
   m_TagString: Untagged
@@ -367,6 +368,7 @@ MonoBehaviour:
   maxHP: 15
   maxLevel: 0
   cheatMode: 0
+  maxInvetorySpace: 10
   mapX: 0
   mapY: 0
   _currentHP: 0
@@ -380,9 +382,46 @@ MonoBehaviour:
   HPBarFilling: {fileID: 0}
   HPBarText: {fileID: 0}
   LevelUIObjectText: {fileID: 0}
+  playerInventory: []
+  gameMenuManager: {fileID: 0}
   isWalking: 0
   isAttacking: 0
   isDying: 0
+  inMenu: 0
+--- !u!114 &294151402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 294151398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d54e6b041718480888ca77c484a6122, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textPrefab: {fileID: 1202459593483900, guid: 075c186d6fedf4a2b928b83deae51b12, type: 2}
+  menuContainerPrefab: {fileID: 1205800290759426, guid: c5b01b5cce5104695b4dbf064359cdbd,
+    type: 2}
+  selectPrefab: {fileID: 1518997339123648, guid: f098acb96cc464f6193493ac9c1bbbba,
+    type: 2}
+  menuListPrefab: {fileID: 1302136569284198, guid: 79eac5236df664c8ebc89c78b8b71307,
+    type: 2}
+  parentingObject: {fileID: 101515325}
+  menuItems:
+  - This
+  - Is
+  - Testing!
+  positionOfMenu: {x: 16, y: -97, z: 0}
+  menuCursor: {fileID: 0}
+  menuObject: {fileID: 0}
+  menuList: {fileID: 0}
+  selectedItem: 1
+  baseYPos: -10
+  yPosPerItem: -25
+  isTransitioning: 0
+  newTargetYPos: 0
+  transitTime: 0.75
+  nestedManager: {fileID: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -762,7 +801,7 @@ Prefab:
     - target: {fileID: 224470876150345816, guid: b194a554f669848789e3985d5aa8fd7e,
         type: 2}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 224470876150345816, guid: b194a554f669848789e3985d5aa8fd7e,
         type: 2}

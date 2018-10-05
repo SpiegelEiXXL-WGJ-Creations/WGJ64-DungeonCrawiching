@@ -99,7 +99,20 @@ public class TileController : MonoBehaviour
         tag = src.tag;
         triggerType = src.triggerType;
         isTriggering = src.isTriggering;
+        ItemScript iscr = src.GetComponent<ItemScript>();
+        if (iscr)
+        {
+            ItemScript myiscr = this.GetComponent<ItemScript>();
+            if (!myiscr)
+                myiscr = this.gameObject.AddComponent<ItemScript>();
 
+            myiscr.itemType = iscr.itemType;
+            myiscr.itemEffect = iscr.itemEffect;
+            myiscr.itemSprite = iscr.itemSprite;
+            myiscr.itemDisplayName = iscr.itemDisplayName;
+            myiscr.itemEffectValue = iscr.itemEffectValue;
+
+        }
     }
 
 

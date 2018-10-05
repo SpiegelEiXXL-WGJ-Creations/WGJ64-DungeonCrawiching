@@ -63,7 +63,14 @@ public static class StaticUtilitiesFunction
             foreach (string tileX in tilesX)
             {
                 Coordinate2D tmp = Coordinate2D.Is(xPos, yPos);
-                Newtonsoft.Json.JsonConvert.PopulateObject(tileX, l.tiles[tmp]);
+                string[] tileXSet = tileX.Split(new string[] { "#i#" }, System.StringSplitOptions.RemoveEmptyEntries);
+                Newtonsoft.Json.JsonConvert.PopulateObject(tileXSet[0], l.tiles[tmp]);
+                if (tileXSet.Length > 1)
+                {
+                    ItemScript itm = l.tiles[tmp].gameObject.AddComponent<ItemScript>();
+                    Newtonsoft.Json.JsonConvert.PopulateObject(tileXSet[1], itm);
+                }
+
                 l.tiles[tmp].Setup();
                 xPos++;
                 if (xPos >= GameManager.instance.mapWidth)
@@ -91,7 +98,11 @@ public static class StaticUtilitiesFunction
             List<string> ls = new List<string>();
             foreach (TileController t in l.tiles.Values)
             {
-                ls.Add(UnityEngine.JsonUtility.ToJson(t));
+                ItemScript i = t.GetComponent<ItemScript>();
+                string addStr = UnityEngine.JsonUtility.ToJson(t);
+                if (i)
+                    addStr = addStr + "#i#" + UnityEngine.JsonUtility.ToJson(i);
+                ls.Add(addStr);
             }
 
             expStr = expStr + "\r" + string.Join("#!#", ls.ToArray());

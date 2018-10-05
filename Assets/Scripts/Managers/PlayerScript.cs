@@ -40,11 +40,13 @@ public class PlayerScript : MonoBehaviour
     public UnityEngine.UI.Text HPBarText;
     public UnityEngine.UI.Text LevelUIObjectText;
     public List<ItemScript> playerInventory;
+    public GameMenuManager gameMenuManager;
 
     [Header("States")]
     public bool isWalking;
     public bool isAttacking;
     public bool isDying;
+    public bool inMenu;
 
 
     // Getters & Setters
@@ -112,7 +114,25 @@ public class PlayerScript : MonoBehaviour
         currentLevel = _currentLevel;
 
         playerInventory = new List<ItemScript>();
+        if (!gameMenuManager)
+            gameMenuManager = this.GetComponentInChildren<GameMenuManager>();
+
+        gameMenuManager.MenuHasClosed += PlayerMenuClosed;
+        gameMenuManager.menuObject.SetActive(false);
+        gameMenuManager.MenuItemWasSelected += PlayerMenuItemSelected;
     }
+
+    void PlayerMenuItemSelected(string menuItemText, GameObject menuItem)
+    {
+        Debug.Log("Menu Item was selected! " + menuItemText);
+    }
+
+
+    void PlayerMenuClosed()
+    {
+        inMenu = false;
+    }
+
 
     void gameManager_MapSpawningDone()
     {
@@ -125,8 +145,6 @@ public class PlayerScript : MonoBehaviour
         }
         else
         {
-            /*mapX = Mathf.RoundToInt(Mathf.Abs(gm.layers[0].tiles[o].transform.localPosition.x / gm.cellWidth));
-            mapY = Mathf.RoundToInt(Mathf.Abs(gm.layers[0].tiles[o].transform.localPosition.y / gm.cellHeight));*/
             mapX = o.x;
             mapY = o.y;
 
@@ -159,7 +177,8 @@ public class PlayerScript : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (!isWalking && !isAttacking && !isDying && !gm.isBusy)
+        if (!isWalking && !isAttacking && !isDying && !gm.isBusy && !inMenu)
+        {
             if (Input.GetButton("Horizontal") && Input.GetAxisRaw("Horizontal") > 0f)
             {
                 if (gm.checkIfMoveableTile(mapX + 1, mapY, GameManagerGameTypeEnum.Player) || cheatMode)
@@ -216,5 +235,16 @@ public class PlayerScript : MonoBehaviour
                 playerAnimator.GetComponentInChildren<AudioSource>().Play();
                 isAttacking = true;
             }
+            else if (Input.GetButtonDown("Fire2"))
+            {
+                inMenu = true;
+                gameMenuManager.menuObject.SetActive(true);
+            }
+        }
+        else if (inMenu)
+        {
+            gameMenuManager.processInput();
+        }
+
     }
 }
