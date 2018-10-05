@@ -132,6 +132,8 @@ public class GameManager : MonoBehaviour
 
     public bool checkIfMoveableTile(int x, int y, GameManagerGameTypeEnum checkType)
     {
+        if (x >= mapWidth || y >= mapHeight) return false;
+
         bool totalTileCheck = true;
         foreach (LayerController l in layers)
         {
@@ -159,5 +161,32 @@ public class GameManager : MonoBehaviour
         }
         return null;
     }
+    public void evaluateTile(int x, int y)
+    {
+        foreach (LayerController l in layers)
+        {
 
+            Coordinate2D currPos = Coordinate2D.Is(x, y);
+            TileController t = l.tiles[currPos];
+            if (!t) continue; // check Controller
+
+            if (!t.isTriggering) continue; // only active
+
+            if (t.triggerType == TileTriggers.Item)
+            {
+                ItemScript i = t.GetComponent<ItemScript>();
+                if (!i) continue; // check if Item
+
+                if (playerScript.playerInventory.Count < playerScript.maxInvetorySpace)
+                {
+                    l.tiles[currPos].isTriggering = false;
+                    l.tiles[currPos].spriteRenderer.enabled = false;
+                    playerScript.playerInventory.Add(i);
+                    //TODO: Pickup sound
+                    //TODO: Pickup info message
+                }
+            }
+
+        }
+    }
 }

@@ -10,6 +10,7 @@ public class LayerTileSelectController : LayerController
     private List<GameObject> tileObjectPrefabs;
     public TileController selectedTile;
     public UnityEngine.UI.Image tilePreview;
+    public UnityEngine.UI.Text layerText;
     public int selectedLayer;
 
     public int selectedTileNumber
@@ -63,7 +64,7 @@ public class LayerTileSelectController : LayerController
     private void FixedUpdate()
     {
 #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.Y))
         {
             string saveFile = UnityEditor.EditorUtility.SaveFilePanel("Save current map", "", "map", "json");
             if (saveFile == "")
@@ -98,10 +99,14 @@ public class LayerTileSelectController : LayerController
                 GameManager.instance.layers.Add(l);
                 GameManager.instance.initLayer(GameManager.instance.layers.Count - 1, true);
             }
+            layerText.text = "Layer: " + selectedLayer;
         }
         if (Input.GetKeyDown(KeyCode.Alpha0))
             if (selectedLayer > 0)
+            {
                 selectedLayer--;
+                layerText.text = "Layer: " + selectedLayer;
+            }
 
 
         if (Input.GetButtonDown("Fire1"))

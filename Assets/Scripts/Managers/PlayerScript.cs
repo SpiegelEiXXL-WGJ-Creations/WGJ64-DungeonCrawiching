@@ -23,6 +23,7 @@ public class PlayerScript : MonoBehaviour
     public int maxHP;
     public int maxLevel;
     public bool cheatMode;
+    public int maxInvetorySpace = 10;
 
     [Header("You can look at this stuff")]
     public int mapX;
@@ -38,6 +39,7 @@ public class PlayerScript : MonoBehaviour
     public UnityEngine.UI.Image HPBarFilling;
     public UnityEngine.UI.Text HPBarText;
     public UnityEngine.UI.Text LevelUIObjectText;
+    public List<ItemScript> playerInventory;
 
     [Header("States")]
     public bool isWalking;
@@ -84,6 +86,7 @@ public class PlayerScript : MonoBehaviour
     {
         gm = GameManager.instance;
         player = GameObject.FindWithTag("PlayerObject");
+        player.transform.localPosition = new Vector3(player.transform.localPosition.x, player.transform.localPosition.y, zPos);
         playerAnimator = player.GetComponent<Animator>();
         playerSprite = player.GetComponent<SpriteRenderer>();
         playerRect = player.GetComponent<RectTransform>();
@@ -108,6 +111,7 @@ public class PlayerScript : MonoBehaviour
         currentHP = _currentHP;
         currentLevel = _currentLevel;
 
+        playerInventory = new List<ItemScript>();
     }
 
     void gameManager_MapSpawningDone()
@@ -144,6 +148,7 @@ public class PlayerScript : MonoBehaviour
                 isWalking = false;
                 playerAnimator.SetBool("isWalking", false);
                 playerAnimator.Play(idleAnimation);
+                gm.evaluateTile(mapX, mapY);
             }
         }
         if (isAttacking)

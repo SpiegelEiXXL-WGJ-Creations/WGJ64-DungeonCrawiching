@@ -8,7 +8,10 @@ public enum TileTriggers
     Damage,
     Move,
     Others,
-    SpawnPoint
+    SpawnPoint,
+    NextFloorStairs,
+    Item,
+    Trap
 }
 
 public class TileController : MonoBehaviour

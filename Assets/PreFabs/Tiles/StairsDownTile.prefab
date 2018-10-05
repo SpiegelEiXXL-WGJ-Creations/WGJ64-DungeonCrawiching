@@ -64,6 +64,8 @@ MonoBehaviour:
   walkableByPlayer: 0
   walkableByEnemy: 0
   walkableByGlitch: 1
+  isTriggering: 0
+  triggerType: 4
 --- !u!212 &212790068682979446
 SpriteRenderer:
   m_ObjectHideFlags: 1
