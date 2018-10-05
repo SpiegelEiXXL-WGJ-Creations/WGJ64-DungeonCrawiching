@@ -4,9 +4,15 @@ using System.Collections.Generic;
 
 public static class StaticUtilitiesFunction
 {
-    public static List<GameObject> LoadMapFromFile(string fileName, GameObject tileControllerPrefab, bool replaceLayers = false)
+    public static List<GameObject> LoadMapFromFile(string fileName, GameObject tileControllerPrefab, bool replaceLayers = false, string content = "")
     {
-        string x = System.IO.File.ReadAllText(fileName);
+
+        string x;
+        if (content != "")
+            x = content;
+        else
+            x = System.IO.File.ReadAllText(fileName);
+
         x = x.Replace("\r\n", "\n");
         string[] gameManagerX = x.Split('\t');
         Newtonsoft.Json.JsonConvert.PopulateObject(gameManagerX[0], GameManager.instance);
@@ -39,6 +45,8 @@ public static class StaticUtilitiesFunction
             l.tileControllerPrefab = tileControllerPrefab;
             l.parentObjectForTiles = o.transform;
             l.name = "Layer#" + i + " (loaded from JSON)";
+
+            l.transform.Translate(0f, 0f, -1f * i);
             l.GetComponent<UnityEngine.UI.GridLayoutGroup>().cellSize = new Vector3(GameManager.instance.cellHeight, GameManager.instance.cellWidth);
             string[] layerXData = layerX.Split('\r');
             Newtonsoft.Json.JsonConvert.PopulateObject(layerXData[0], l);
@@ -69,6 +77,7 @@ public static class StaticUtilitiesFunction
             spawnedObjects.Add(o);
         }
         GameManager.instance.initGameManager();
+        GameManager.instance.triggerMapLoadingEvent();
         return spawnedObjects;
     }
 
@@ -96,5 +105,9 @@ public static class StaticUtilitiesFunction
         outputStr = System.Text.RegularExpressions.Regex.Replace(outputStr, @"(""[^""]*"":)?(\{""instanceID"":[^\},]*\},?)", "");
         System.IO.File.WriteAllText(fileFile, outputStr);
 
+    }
+    public static List<GameObject> LoadMapFromResources(string mapName, GameObject tileControllerPrefab, bool replaceLayers = false)
+    {
+        return LoadMapFromFile("", tileControllerPrefab, replaceLayers, StaticResourceProvider.GetMapJSONObject(mapName));
     }
 }

@@ -8,6 +8,7 @@ TagManager:
   - EnemyObject
   - GlitchObject
   - UI_HPBar
+  - PlayerSpawnAnchor
   layers:
   - Default
   - TransparentFX

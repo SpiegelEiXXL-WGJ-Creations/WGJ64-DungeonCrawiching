@@ -2,6 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum GameManagerGameTypeEnum
+{
+    Player,
+    Enemy,
+    Glitch,
+    PlayerAndEnemy,
+    PlayerAndEnemyAndGlitch,
+    EnemyAndGlitch,
+    EnemyAndPlayer
+}
+
 public class GameManager : MonoBehaviour
 {
     // static elemens for reference purposes
@@ -67,6 +78,8 @@ public class GameManager : MonoBehaviour
         layers[layerIndex].layerHeight = mapHeight;
 
         layers[layerIndex].name = "Layer#" + layerIndex;
+
+        layers[layerIndex].transform.Translate(0f, 0f, -1 * layerIndex);
         layers[layerIndex].GetComponent<UnityEngine.UI.GridLayoutGroup>().cellSize = new Vector3(cellHeight, cellWidth);
 
         if (build)
@@ -84,6 +97,7 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < NumberOfLayers; i++)
             {
                 layers.Add(GameObject.Instantiate(LayerPrefab, GameGrid.transform).GetComponent<LayerController>());
+                layers[i].transform.Translate(0f, 0f, -1f * i);
             }
             for (int i = 0; i < layers.Count; i++)
             {
@@ -96,12 +110,18 @@ public class GameManager : MonoBehaviour
 
         // static map load
         if (mapToLoad != "")
-            StaticUtilitiesFunction.LoadMapFromFile(mapToLoad, TilePrefab);
-        if (mapSpawnDone != null)
-            mapSpawnDone();
+            StaticUtilitiesFunction.LoadMapFromResources(mapToLoad, TilePrefab);
+
+        triggerMapLoadingEvent();
 
         mapIsInitialized = true;
 
+    }
+
+    public void triggerMapLoadingEvent()
+    {
+        if (mapSpawnDone != null)
+            mapSpawnDone();
     }
 
     // Update is called once per frame
@@ -109,4 +129,35 @@ public class GameManager : MonoBehaviour
     {
 
     }
+
+    public bool checkIfMoveableTile(int x, int y, GameManagerGameTypeEnum checkType)
+    {
+        bool totalTileCheck = true;
+        foreach (LayerController l in layers)
+        {
+            TileController t = l.tiles[Coordinate2D.Is(x, y)];
+            if (checkType == GameManagerGameTypeEnum.Player)
+                totalTileCheck = totalTileCheck && t.walkableByPlayer;
+            else if (checkType == GameManagerGameTypeEnum.Enemy)
+                totalTileCheck = totalTileCheck && t.walkableByEnemy;
+            else if (checkType == GameManagerGameTypeEnum.Glitch)
+                totalTileCheck = totalTileCheck && t.walkableByGlitch;
+        }
+        return totalTileCheck;
+    }
+
+    public Coordinate2D MapGetPlayerSpawnTrigger()
+    {
+
+        foreach (LayerController l in layers)
+        {
+            foreach (Coordinate2D c in l.tiles.Keys)
+            {
+                if (l.tiles[c].triggerType == TileTriggers.SpawnPoint)
+                    return c;
+            }
+        }
+        return null;
+    }
+
 }

@@ -63,11 +63,13 @@ public class MainMenuManager : MonoBehaviour
     {
         NextButton.interactable = true;
     }
-
-
+    public void goToLevel1()
+    {
+        goToNextScene("static_Level1_CaveEnter");
+    }
     public void SkipText()
     {
-        NextButton.interactable = true;
+        StartButton.interactable = true;
         tep.StopAllCoroutines();
         tep.textObj.text = "You decided to skip the intro.";
     }

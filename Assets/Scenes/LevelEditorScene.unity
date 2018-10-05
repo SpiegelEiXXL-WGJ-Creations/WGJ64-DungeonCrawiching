@@ -321,9 +321,9 @@ MonoBehaviour:
     type: 2}
   TilePrefab: {fileID: 1920753771314060, guid: 3da86d403a7e745f6b114e38362a969d, type: 2}
   mapToLoad: 
-  NumberOfLayers: 4
-  mapWidth: 1
-  mapHeight: 1
+  NumberOfLayers: 1
+  mapWidth: 5
+  mapHeight: 5
   isBusy: 0
   mapIsInitialized: 0
   cellWidth: 0
@@ -362,10 +362,11 @@ MonoBehaviour:
   attackAnimation: GlitchPlayerAttack
   walkAnimation: GlitchPlayerWalk
   dyingAnimation: GlitchPlayerDying
-  zPos: -1
+  zPos: -5
   animationSpeed: 0.005
   maxHP: 15
   maxLevel: 0
+  cheatMode: 0
   mapX: 0
   mapY: 0
   _currentHP: 0
@@ -1267,6 +1268,7 @@ MonoBehaviour:
   - {fileID: 114205724006267134, guid: ce63a489620b74538abc02d616b43999, type: 2}
   - {fileID: 114555968014816214, guid: a1cb3520567784f738a0bc1a4599f6f8, type: 2}
   - {fileID: 114908096825667836, guid: cf2c644edfe9a48358e70b4e29563abf, type: 2}
+  - {fileID: 114077420349334226, guid: 82fa832c5891647b2a9d2bd95c8c7dc7, type: 2}
   selectedTile: {fileID: 0}
   tilePreview: {fileID: 1344522692}
   selectedLayer: 0

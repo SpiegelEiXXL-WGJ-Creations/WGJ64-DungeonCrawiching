@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 
+public enum TileTriggers
+{
+    Damage,
+    Move,
+    Others,
+    SpawnPoint
+}
+
 public class TileController : MonoBehaviour
 {
     public Sprite spriteTexture
@@ -41,6 +49,10 @@ public class TileController : MonoBehaviour
     public bool walkableByPlayer;
     public bool walkableByEnemy;
     public bool walkableByGlitch;
+    /*public delegate void trigger();
+    public event trigger TileTouchTrigger;*/
+    public bool isTriggering;
+    public TileTriggers triggerType;
 
     // Use this for initialization
     void Start()
@@ -81,6 +93,11 @@ public class TileController : MonoBehaviour
         walkableByPlayer = src.walkableByPlayer;
 
         spriteTexture = src.spriteTexture;
+        tag = src.tag;
+        triggerType = src.triggerType;
+        isTriggering = src.isTriggering;
 
     }
+
+
 }

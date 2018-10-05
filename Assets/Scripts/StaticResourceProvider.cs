@@ -24,4 +24,9 @@ public static class StaticResourceProvider
             return null;
 
     }
+    public static string GetMapJSONObject(string mapName)
+    {
+        TextAsset lvl = Resources.Load<TextAsset>("FixedLevels/" + mapName);
+        return lvl.text;
+    }
 }

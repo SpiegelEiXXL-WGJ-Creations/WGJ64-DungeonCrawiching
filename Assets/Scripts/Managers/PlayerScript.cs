@@ -22,6 +22,7 @@ public class PlayerScript : MonoBehaviour
     public float animationSpeed;
     public int maxHP;
     public int maxLevel;
+    public bool cheatMode;
 
     [Header("You can look at this stuff")]
     public int mapX;
@@ -86,10 +87,11 @@ public class PlayerScript : MonoBehaviour
         playerAnimator = player.GetComponent<Animator>();
         playerSprite = player.GetComponent<SpriteRenderer>();
         playerRect = player.GetComponent<RectTransform>();
+        gm.mapSpawnDone += gameManager_MapSpawningDone;
         if (gm.mapIsInitialized)
             gameManager_MapSpawningDone();
-        else
-            gm.mapSpawnDone += gameManager_MapSpawningDone;
+
+
         if (HPBar)
         {
             HPBarText = HPBar.GetComponentInChildren<UnityEngine.UI.Text>();
@@ -110,11 +112,24 @@ public class PlayerScript : MonoBehaviour
 
     void gameManager_MapSpawningDone()
     {
+        Coordinate2D o = gm.MapGetPlayerSpawnTrigger();
+        if (o == null)
+        {
+            mapX = 0;
+            mapY = gm.mapHeight - 1;
 
-        playerRect.anchoredPosition = new Vector3(gm.cellWidth / 2f, -1f * gm.cellHeight / 2f, zPos);
+        }
+        else
+        {
+            /*mapX = Mathf.RoundToInt(Mathf.Abs(gm.layers[0].tiles[o].transform.localPosition.x / gm.cellWidth));
+            mapY = Mathf.RoundToInt(Mathf.Abs(gm.layers[0].tiles[o].transform.localPosition.y / gm.cellHeight));*/
+            mapX = o.x;
+            mapY = o.y;
 
-        mapX = 0;
-        mapY = gm.mapHeight - 1;
+        }
+
+        playerRect.anchoredPosition = new Vector3(gm.cellWidth * mapX + gm.cellWidth / 2f, -1 * mapY * gm.cellHeight + -1f * gm.cellHeight / 2f, zPos);
+
     }
 
 
@@ -142,40 +157,52 @@ public class PlayerScript : MonoBehaviour
         if (!isWalking && !isAttacking && !isDying && !gm.isBusy)
             if (Input.GetButton("Horizontal") && Input.GetAxisRaw("Horizontal") > 0f)
             {
-                targetPosition = new Vector3(playerRect.localPosition.x + gm.cellWidth, playerRect.localPosition.y, zPos);
+                if (gm.checkIfMoveableTile(mapX + 1, mapY, GameManagerGameTypeEnum.Player) || cheatMode)
+                {
 
-                playerAnimator.SetBool("isWalking", true);
-                playerAnimator.Play(walkAnimation);
-                isWalking = true;
-                playerSprite.flipX = false;
-                mapX++;
+                    targetPosition = new Vector3(playerRect.localPosition.x + gm.cellWidth, playerRect.localPosition.y, zPos);
+
+                    playerAnimator.SetBool("isWalking", true);
+                    playerAnimator.Play(walkAnimation);
+                    isWalking = true;
+                    playerSprite.flipX = false;
+                    mapX++;
+                }
             }
             else if (Input.GetButton("Horizontal") && Input.GetAxisRaw("Horizontal") < 0f)
             {
-                targetPosition = new Vector3(playerRect.localPosition.x - gm.cellWidth, playerRect.localPosition.y, zPos);
+                if (gm.checkIfMoveableTile(mapX - 1, mapY, GameManagerGameTypeEnum.Player) || cheatMode)
+                {
+                    targetPosition = new Vector3(playerRect.localPosition.x - gm.cellWidth, playerRect.localPosition.y, zPos);
 
-                playerAnimator.SetBool("isWalking", true);
-                playerAnimator.Play(walkAnimation);
-                isWalking = true;
-                playerSprite.flipX = true;
-                mapX--;
+                    playerAnimator.SetBool("isWalking", true);
+                    playerAnimator.Play(walkAnimation);
+                    isWalking = true;
+                    playerSprite.flipX = true;
+                    mapX--;
+                }
             }
             else if (Input.GetButton("Vertical") && Input.GetAxisRaw("Vertical") > 0f)
             {
-
-                targetPosition = new Vector3(playerRect.localPosition.x, playerRect.localPosition.y + gm.cellHeight, zPos);
-                playerAnimator.SetBool("isWalking", true);
-                playerAnimator.Play(walkAnimation);
-                isWalking = true;
-                mapY--;
+                if (gm.checkIfMoveableTile(mapX, mapY - 1, GameManagerGameTypeEnum.Player) || cheatMode)
+                {
+                    targetPosition = new Vector3(playerRect.localPosition.x, playerRect.localPosition.y + gm.cellHeight, zPos);
+                    playerAnimator.SetBool("isWalking", true);
+                    playerAnimator.Play(walkAnimation);
+                    isWalking = true;
+                    mapY--;
+                }
             }
             else if (Input.GetButton("Vertical") && Input.GetAxisRaw("Vertical") < 0f)
             {
-                targetPosition = new Vector3(playerRect.localPosition.x, playerRect.localPosition.y - gm.cellHeight, zPos);
-                playerAnimator.SetBool("isWalking", true);
-                playerAnimator.Play(walkAnimation);
-                isWalking = true;
-                mapY++;
+                if (gm.checkIfMoveableTile(mapX, mapY + 1, GameManagerGameTypeEnum.Player) || cheatMode)
+                {
+                    targetPosition = new Vector3(playerRect.localPosition.x, playerRect.localPosition.y - gm.cellHeight, zPos);
+                    playerAnimator.SetBool("isWalking", true);
+                    playerAnimator.Play(walkAnimation);
+                    isWalking = true;
+                    mapY++;
+                }
             }
             else if (Input.GetButton("Fire1"))
             {

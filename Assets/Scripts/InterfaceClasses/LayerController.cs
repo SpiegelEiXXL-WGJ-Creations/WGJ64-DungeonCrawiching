@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class Coordinate2D
 {
-    private int x;
-    private int y;
+    public int x;
+    public int y;
     private static Dictionary<int, Dictionary<int, Coordinate2D>> _tmp;
 
     static Coordinate2D()
@@ -52,6 +52,7 @@ public class LayerController : MonoBehaviour
             for (int j = 0; j < layerWidth; j++)
             {
                 GameObject tc = GameObject.Instantiate(tileControllerPrefab, parentObjectForTiles);
+                tc.name = "Tile " + j + "/" + i;
                 tiles.Add(Coordinate2D.Is(j, i), tc.GetComponent<TileController>());
 
             }

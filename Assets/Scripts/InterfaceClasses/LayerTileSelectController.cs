@@ -62,6 +62,7 @@ public class LayerTileSelectController : LayerController
 
     private void FixedUpdate()
     {
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.S))
         {
             string saveFile = UnityEditor.EditorUtility.SaveFilePanel("Save current map", "", "map", "json");
@@ -79,6 +80,7 @@ public class LayerTileSelectController : LayerController
 
             StaticUtilitiesFunction.LoadMapFromFile(loadFile, tileControllerPrefab, true);
         }
+#endif
         if (Input.GetKey(KeyCode.Plus))
             Camera.main.orthographicSize += 1;
         if (Input.GetKey(KeyCode.Minus))
