@@ -29,4 +29,9 @@ public static class StaticResourceProvider
         TextAsset lvl = Resources.Load<TextAsset>("FixedLevels/" + mapName);
         return lvl.text;
     }
+    public static AudioClip GetClip(string ClipName)
+    {
+        AudioClip l = Resources.Load<AudioClip>("Music/" + ClipName);
+        return l;
+    }
 }

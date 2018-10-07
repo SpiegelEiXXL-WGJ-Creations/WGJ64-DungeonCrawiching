@@ -50,4 +50,9 @@ public class ItemScript : MonoBehaviour
         if (itemEffect == ItemEffect.Healing)
             user.currentHP = user.currentHP + itemEffectValue;
     }
+
+    public override string ToString()
+    {
+        return itemDisplayName;
+    }
 }

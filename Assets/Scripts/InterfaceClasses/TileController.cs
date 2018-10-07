@@ -56,6 +56,7 @@ public class TileController : MonoBehaviour
     public event trigger TileTouchTrigger;*/
     public bool isTriggering;
     public TileTriggers triggerType;
+    public object triggerParameters;
 
     // Use this for initialization
     void Start()

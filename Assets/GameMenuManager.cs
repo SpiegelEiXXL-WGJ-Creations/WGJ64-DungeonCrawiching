@@ -11,11 +11,12 @@ public class GameMenuManager : MonoBehaviour
     public GameObject selectPrefab;
     public GameObject menuListPrefab;
     public GameObject parentingObject;
-    public List<string> menuItems;
+    public List<object> menuItems;
     public Vector3 positionOfMenu;
     public float baseYPos = -10f;
     public float yPosPerItem = -15f;
     public float transitTime = 0.05f;
+    public bool autoInit = false;
 
     [Header("State/Instance objects")]
     public Dictionary<int, GameObject> menuItemsInstanced;
@@ -30,12 +31,31 @@ public class GameMenuManager : MonoBehaviour
     //public GameMenuManager nestedManager;
 
     public delegate void MenuClosed();
-    public delegate void MenuItemSelected(string menuItemText, GameObject menuItem);
+    public delegate void MenuItemSelected(string menuItemText, GameObject menuItem, object menuItemObject);
     public event MenuClosed MenuHasClosed;
     public event MenuItemSelected MenuItemWasSelected;
 
+
     // Use this for initialization
     void Start()
+    {
+        if (autoInit)
+            InitMenu();
+    }
+
+    public void takeOverValuesFromTemplate(GameMenuManager src)
+    {
+        textPrefab = src.textPrefab;
+        menuContainerPrefab = src.menuContainerPrefab;
+        selectPrefab = src.selectPrefab;
+        menuListPrefab = src.menuListPrefab;
+        parentingObject = src.parentingObject;
+        positionOfMenu = src.positionOfMenu;
+        baseYPos = src.baseYPos;
+        yPosPerItem = src.yPosPerItem;
+        transitTime = src.transitTime;
+    }
+    public void InitMenu()
     {
         menuObject = GameObject.Instantiate(menuContainerPrefab, parentingObject.transform);
         menuCursor = GameObject.Instantiate(selectPrefab, menuObject.transform);
@@ -44,14 +64,19 @@ public class GameMenuManager : MonoBehaviour
         menuObject.GetComponent<RectTransform>().anchoredPosition = positionOfMenu;
         menuItemsInstanced = new Dictionary<int, GameObject>();
         int idx = 0;
-        foreach (string s in menuItems)
+        foreach (object so in menuItems)
         {
             GameObject o = GameObject.Instantiate(textPrefab);
-            o.GetComponent<Text>().text = s;
+            o.GetComponent<Text>().text = so.ToString();
             o.transform.SetParent(menuList.transform);
             menuItemsInstanced.Add(idx, o);
             idx++;
         }
+        menuObject.SetActive(false);
+
+        //init position
+        menuCursor.transform.localPosition = new Vector3(menuCursor.transform.localPosition.x, selectedItem * yPosPerItem + baseYPos, menuCursor.transform.localPosition.z);
+
     }
 
     // Update is called once per frame
@@ -75,7 +100,7 @@ public class GameMenuManager : MonoBehaviour
         if (Input.GetButtonDown("Fire1"))
         {
             if (MenuItemWasSelected != null)
-                MenuItemWasSelected(menuItemsInstanced[selectedItem].GetComponent<Text>().text, menuItemsInstanced[selectedItem]);
+                MenuItemWasSelected(menuItemsInstanced[selectedItem].GetComponent<Text>().text, menuItemsInstanced[selectedItem], menuItems[selectedItem]);
             // select
         }
         if (Input.GetButtonDown("Fire2"))
@@ -108,5 +133,16 @@ public class GameMenuManager : MonoBehaviour
     {
 
     }
+    private void OnDestroy()
+    {
+        if (menuList)
+            GameObject.Destroy(menuList);
+        if (menuCursor)
+            GameObject.Destroy(menuCursor);
+        if (menuObject)
+            GameObject.Destroy(menuObject);
+    }
+
 
 }
+

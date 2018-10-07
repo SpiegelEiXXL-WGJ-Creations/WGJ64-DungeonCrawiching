@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 
-public class LayerTileSelectController : LayerController
+public class LayerLevelEditorController : LayerController
 {
 
     public List<TileController> possibleTiles;
@@ -64,6 +64,7 @@ public class LayerTileSelectController : LayerController
     private void FixedUpdate()
     {
         if (playerRef.inMenu) return;
+        if (!playerRef.cheatMode) return;
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Y))
         {

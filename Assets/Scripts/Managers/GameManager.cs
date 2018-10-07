@@ -23,14 +23,17 @@ public class GameManager : MonoBehaviour
     public GameObject LayerPrefab;
     public GameObject TilePrefab;
 
-    [Header("Settings>Fixed stage")]
-    public string mapToLoad;
-
-
-    [Header("Settings>Random stage")]
+    [Header("Settings>Stage settings")]
     public int NumberOfLayers = 3;
     public int mapWidth = 15;
     public int mapHeight = 15;
+    public string bgmName;
+    public AudioSource bgmSource;
+
+    [Header("Settings>Fixed stage")]
+    public string mapToLoad;
+    [Header("Settings>Random stage")]
+    public bool randomLevel = true;
 
     [Header("Debug view (no touchy!)")]
     public bool isBusy = false; // while enemy is doing attacks
@@ -50,7 +53,10 @@ public class GameManager : MonoBehaviour
         if (!GameManager.instance)
             GameManager.instance = this;
         else
-            Debug.LogError("! Game Manager is already instanciated (statically), what are you doing?");
+        {
+            Debug.LogError("! Game Manager is already instanciated (statically), what are you doing? - overwrote static instance");
+            GameManager.instance = this;
+        }
 
     }
     void Start()
@@ -69,6 +75,13 @@ public class GameManager : MonoBehaviour
         cellWidth = t.textureRect.width / t.pixelsPerUnit;
 
         GameGrid.GetComponent<RectTransform>().sizeDelta = new Vector3(mapWidth * cellWidth, mapHeight * cellHeight);
+
+        if (bgmSource)
+        {
+            bgmSource.clip = StaticResourceProvider.GetClip(string.IsNullOrEmpty(bgmName) ? "RandomStage" : bgmName);
+            bgmSource.Stop();
+            bgmSource.Play();
+        }
         // </setup>
     }
 
@@ -97,6 +110,20 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < NumberOfLayers; i++)
             {
                 layers.Add(GameObject.Instantiate(LayerPrefab, GameGrid.transform).GetComponent<LayerController>());
+
+                if (randomLevel)
+                {
+                    GameObject r = layers[i].gameObject;
+                    GameObject.Destroy(layers[i].gameObject.GetComponent<LayerController>());
+                    LayerRandomLevelGenerator lc = r.AddComponent<LayerRandomLevelGenerator>();
+                    lc.tileControllerPrefab = TilePrefab;
+                    lc.layerWidth = mapWidth;
+                    lc.layerHeight = mapHeight;
+                    lc.parentObjectForTiles = lc.gameObject.transform;
+                    layers.RemoveAt(i);
+                    layers.Insert(i, lc);
+                }
+
                 layers[i].transform.Translate(0f, 0f, -1f * i);
             }
             for (int i = 0; i < layers.Count; i++)
@@ -185,6 +212,17 @@ public class GameManager : MonoBehaviour
                     //TODO: Pickup sound
                     //TODO: Pickup info message
                 }
+            }
+            if (t.triggerType == TileTriggers.NextFloorStairs)
+            {
+                string nextFloor = "ProceduralGeneratedLevel";
+                if (t.triggerParameters != null)
+                {
+                    nextFloor = (string)t.triggerParameters;
+                }
+                UnityEngine.SceneManagement.SceneManager.LoadScene(nextFloor);
+
+
             }
 
         }

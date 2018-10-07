@@ -10,6 +10,7 @@ public class PlayerScript : MonoBehaviour
     [Header("Game Objects")]
     public GameObject HPBar;
     public GameObject LevelUIObject;
+    public GameObject LowHPAlert;
 
     [Header("Animations")]
     public string idleAnimation;
@@ -41,6 +42,10 @@ public class PlayerScript : MonoBehaviour
     public UnityEngine.UI.Text LevelUIObjectText;
     public List<ItemScript> playerInventory;
     public GameMenuManager gameMenuManager;
+    public GameObject playerInventoryMenu;
+    public GameObject playerInventoryMenuItemUseMenu;
+    public GameMenuManager activeMenu;
+    public ItemScript selectedInventoryItem;
 
     [Header("States")]
     public bool isWalking;
@@ -64,6 +69,10 @@ public class PlayerScript : MonoBehaviour
                 _currentHP = 0;
                 isDying = true;
             }
+            if (_currentHP <= maxHP / 10)
+                LowHPAlert.SetActive(true);
+            else
+                LowHPAlert.SetActive(false);
 
             HPBarFilling.fillAmount = currentHP / maxHP;
             HPBarText.text = currentHP + " / " + maxHP;
@@ -118,19 +127,134 @@ public class PlayerScript : MonoBehaviour
             gameMenuManager = this.GetComponentInChildren<GameMenuManager>();
 
         gameMenuManager.MenuHasClosed += PlayerMenuClosed;
-        gameMenuManager.menuObject.SetActive(false);
         gameMenuManager.MenuItemWasSelected += PlayerMenuItemSelected;
+        gameMenuManager.menuItems = new List<object>();
+        gameMenuManager.menuItems.Add("Items");
+        gameMenuManager.menuItems.Add("Status");
+        gameMenuManager.menuItems.Add("Save");
+        gameMenuManager.InitMenu();
     }
 
-    void PlayerMenuItemSelected(string menuItemText, GameObject menuItem)
+    void PlayerMenuItemSelected(string menuItemText, GameObject menuItem, object menuObj)
     {
         Debug.Log("Menu Item was selected! " + menuItemText);
+        if (menuItemText == "Items")
+        {
+            if (playerInventoryMenu != null)
+                GameObject.DestroyImmediate(playerInventoryMenu);
+
+            playerInventoryMenu = new GameObject("inventoryMenu");
+            GameMenuManager m = playerInventoryMenu.AddComponent<GameMenuManager>();
+            m.takeOverValuesFromTemplate(gameMenuManager);
+            m.menuItems = new List<object>();
+            foreach (ItemScript i in playerInventory)
+            {
+                m.menuItems.Add(i);
+
+            }
+            if (playerInventory.Count == 0)
+                m.menuItems.Add("<no items>");
+            m.positionOfMenu.Set(m.positionOfMenu.x + 50f, m.positionOfMenu.y - 20f, m.positionOfMenu.z - 1f);
+            m.InitMenu();
+            m.menuObject.SetActive(true);
+            m.MenuHasClosed += InventoryItemListMenuHasClosed;
+            m.MenuItemWasSelected += InventoryItemListMenuItemWasSelected;
+            activeMenu = m;
+        }
+    }
+
+    void InventoryItemListMenuItemWasSelected(string menuItemText, GameObject menuItem, object menuObj)
+    {
+        if (menuItemText == "<no items>")
+        {
+            InventoryItemListMenuHasClosed();
+            return;
+        }
+        selectedInventoryItem = (ItemScript)menuObj;
+
+        if (playerInventoryMenuItemUseMenu != null)
+            GameObject.DestroyImmediate(playerInventoryMenuItemUseMenu);
+
+        playerInventoryMenuItemUseMenu = new GameObject("itemUseMenu");
+        GameMenuManager m = playerInventoryMenuItemUseMenu.AddComponent<GameMenuManager>();
+        m.takeOverValuesFromTemplate(playerInventoryMenu.GetComponent<GameMenuManager>());
+        m.menuItems = new List<object>();
+
+        if (selectedInventoryItem.itemType == ItemType.Usable)
+        {
+            m.menuItems.Add("Use");
+        }
+        if (selectedInventoryItem.itemType == ItemType.Equipable)
+            m.menuItems.Add("Equip");
+
+        if (selectedInventoryItem.itemType == ItemType.EventItems)
+            m.menuItems.Add("???");
+
+        m.menuItems.Add("Drop");
+        m.positionOfMenu.Set(m.positionOfMenu.x + 50f, m.positionOfMenu.y - 20f, m.positionOfMenu.z - 1f);
+        m.InitMenu();
+        m.menuObject.SetActive(true);
+        m.MenuHasClosed += InventoryItemListMenuItemSelectionClosed;
+        m.MenuItemWasSelected += InventoryItemListMenuItemSelectionActionChosen;
+        activeMenu = m;
+    }
+
+    void InventoryItemListMenuItemSelectionActionChosen(string menuItemText, GameObject menuItem, object menuItemObject)
+    {
+        if (menuItemText == "Drop")
+        {
+            Debug.Log("Not implemented. :-(");
+        }
+        if (menuItemText == "Equip")
+        {
+            Debug.Log("Not implemented. :-(");
+        }
+        if (menuItemText == "Use")
+        {
+            if (selectedInventoryItem.itemEffect == ItemEffect.Healing)
+                currentHP = currentHP + selectedInventoryItem.itemEffectValue;
+            else
+                Debug.Log("Not implemented. :-(");
+
+            playerInventory.Remove(selectedInventoryItem);
+            GameObject.Destroy(selectedInventoryItem);
+
+            /*playerInventoryMenu.SetActive(false);
+            playerInventoryMenuItemUseMenu.SetActive(false);
+            gameMenuManager.gameObject.SetActive(false);
+            activeMenu = null;
+            inMenu = false;*/
+            InventoryItemListMenuItemSelectionClosed();
+            InventoryItemListMenuHasClosed();
+            PlayerMenuClosed();
+        }
+        if (menuItemText == "???")
+        {
+            Debug.Log("Not implemented. :-(");
+        }
+
+    }
+
+
+    void InventoryItemListMenuItemSelectionClosed()
+    {
+        //playerInventoryMenuItemUseMenu.SetActive(false);
+        playerInventoryMenuItemUseMenu.GetComponent<GameMenuManager>().menuObject.SetActive(false);
+        activeMenu = playerInventoryMenu.GetComponent<GameMenuManager>();
+    }
+
+
+    void InventoryItemListMenuHasClosed()
+    {
+        activeMenu = gameMenuManager;
+        playerInventoryMenu.GetComponent<GameMenuManager>().menuObject.SetActive(false);
     }
 
 
     void PlayerMenuClosed()
     {
         inMenu = false;
+        gameMenuManager.GetComponent<GameMenuManager>().menuObject.SetActive(false);
     }
 
 
@@ -239,12 +363,14 @@ public class PlayerScript : MonoBehaviour
             {
                 inMenu = true;
                 gameMenuManager.menuObject.SetActive(true);
+                activeMenu = gameMenuManager;
             }
         }
         else if (inMenu)
         {
-            gameMenuManager.processInput();
+            activeMenu.processInput();
         }
 
     }
 }
+

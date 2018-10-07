@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/LevelEditorScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/ProceduralGeneratedLevel.unity
+    guid: cf63a5c0c5ff346b9aa8e797cfb700e3
   m_configObjects: {}
